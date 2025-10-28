@@ -77,9 +77,9 @@ async function onSubmit(values: z.infer<typeof formSchema>){
       <div className="flex justify-center items-center h-screen m-0">
         <div className='flex flex-col items-center bg-white w-[90%] max-w-[400px] p-[30px] rounded-[15px] border-2 absolute z-50'>
 
-            <div className='text-center mb-[25px] text-green-600'>
-                <h1 className='m-0 text-[24px] font-bold'>Welcome to PadalaKo</h1>
-                <h1 className='text-[18px] text-gray-900 mt-[5px] mb-0 ml-0 mr-0'>Management System</h1>
+            <div className='text-center mb-[25px] text-blue-600'>
+                <h1 className='m-0 text-[24px] font-bold'>ReamJob POS</h1>
+                <h1 className='text-[18px] text-gray-900 mt-[5px] mb-0 ml-0 mr-0'>POS System for Print Shops</h1>
             </div>
 
             <FormField

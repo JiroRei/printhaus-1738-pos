@@ -6,6 +6,8 @@ import { RouterProvider } from "react-router/dom";
 import './index.css'
 import App from './App.tsx'
 import Dashboard from './pages/dashboard.tsx';
+import { ThemeProvider } from './pages/page-comps/theme-provider.tsx';
+import PrintJobs from './pages/printjobs.tsx';
 
 const router = createBrowserRouter([
   {
@@ -14,12 +16,18 @@ const router = createBrowserRouter([
   },
   {
     path: "dashboard",
-    Component: Dashboard  ,
+    Component: Dashboard,
+  },
+  {
+    path: "printjob",
+    Component: PrintJobs,
   },
 ]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
     <RouterProvider router={router} />,
+    </ThemeProvider>
   </StrictMode>,
 )

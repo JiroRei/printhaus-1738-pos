@@ -12,6 +12,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import {
   DropdownMenu,
@@ -41,18 +42,34 @@ import { Button } from "@/components/ui/button"
 import * as ico from "lucide-react"
 import React from "react"
 import { Separator } from "@/components/ui/separator" 
+import { useTheme } from "./theme-provider"
 
 
 
 
 
 export function AppSidebar() {
+
+  const { toggleSidebar } = useSidebar();
+  const {setTheme, theme} = useTheme();
+    
+    const toggleTheme = () => {
+      
+      if(theme == "light"){
+        setTheme("dark")
+      }else{
+        setTheme("light")
+      }
+      console.log(theme)
+    }
   
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="h-max text-white text-lg mt-2 bg-green-800"><ico.PhilippinePeso className="mr-1.5" /><Separator orientation="vertical" className="mr-1 bg-white"/>PadalaKo Management System</SidebarGroupLabel>
+          <SidebarGroupLabel className="h-max text-white text-xl mt-2 mb-3 bg-headkolor"><ico.Printer className="mr-1.5" onClick={() => {toggleSidebar(); toggleTheme();}} /><Separator orientation="vertical" className="mr-1 bg-white"/>
+            ReamJob POS
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="mt-4">
               <SidebarMenuItem>
@@ -68,13 +85,13 @@ export function AppSidebar() {
                 </SidebarMenuSubItem>
 
                 </SidebarMenuSub>
-                <div  className="text-background bg-kolor p-1">HUMAN RESOURCES</div>
+                <div  className="text-background bg-kolor p-1">SALES</div>
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
-                      <a href="Employee">
-                        <ico.Users />
-                        <span className="">Employees</span>
+                      <a href="printjob">
+                        <ico.FilePlus2 />
+                        <span className="">New Print Job</span>
                       </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -84,8 +101,8 @@ export function AppSidebar() {
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
                       <a href="Requests">
-                        <ico.UserSquare />
-                        <span className="">Employee Requests</span>
+                        <ico.List />
+                        <span className="">Transactions</span>
                       </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -95,20 +112,20 @@ export function AppSidebar() {
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
                       <a href="Attendance">
-                        <ico.Clock />
-                        <span className="">Attendance</span>
+                        <ico.Table2 />
+                        <span className="">Sales Report</span>
                       </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                 </SidebarMenuSub>
 
-                <div  className="text-background bg-kolor p-1">FINANCES</div>
+                <div  className="text-background bg-kolor p-1">INVENTORY</div>
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
                       <a href="ExpensesRevenue">
-                        <ico.CircleDollarSign />
-                        <span className="">Revenue & Expenses</span>
+                        <ico.Package />
+                        <span className="">Inventory</span>
                       </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -118,8 +135,8 @@ export function AppSidebar() {
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
                       <a href="Payroll">
-                        <ico.Receipt />
-                        <span className="">Payroll</span>
+                        <ico.PackagePlus />
+                        <span className="">Inventory Management</span>
                       </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
