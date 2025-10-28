@@ -37,43 +37,44 @@ const form = useForm<z.infer<typeof formSchema>>({
 
 
 async function onSubmit(values: z.infer<typeof formSchema>){
-  try {
-    try {
-      const res = await fetch("http://localhost:3000/employees/check-password/"+values.idEmployee, {
-        method: "POST",
-        headers: {
-          "Content-Type": "Application/JSON",
-        },
-        body: JSON.stringify(values),
-      })
-      const data = await res.json();
-      console.log(data)
-      if(data.status){
-        navigate('/dashboard')
-      } else {
-        console.log('asdasdad');
-        <Dialog>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Wrong ID or Password </DialogTitle>
-              <DialogDescription>
-                Please input proper credentials
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-        console.log('error');
-      }
-      } catch (error) {
+  // try {
+  //   try {
+  //     const res = await fetch("http://localhost:3000/employees/check-password/"+values.idEmployee, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "Application/JSON",
+  //       },
+  //       body: JSON.stringify(values),
+  //     })
+  //     const data = await res.json();
+  //     console.log(data)
+  //     if(data.status){
+  //       navigate('/dashboard')
+  //     } else {
+  //       console.log('asdasdad');
+  //       <Dialog>
+  //         <DialogContent>
+  //           <DialogHeader>
+  //             <DialogTitle>Wrong ID or Password </DialogTitle>
+  //             <DialogDescription>
+  //               Please input proper credentials
+  //             </DialogDescription>
+  //           </DialogHeader>
+  //         </DialogContent>
+  //       </Dialog>
+  //       console.log('error');
+  //     }
+  //     } catch (error) {
 
         
-    }
-    console.log(values)
-    }catch(error){console.log(error)}
+  //   }
+  //   console.log(values)
+  //   }catch(error){console.log(error)}
+
 }
   return (
   <Form {...form}>
-    <form onSubmit={form.handleSubmit(onSubmit)}>
+    <form>
       <div className="flex justify-center items-center h-screen m-0">
         <div className='flex flex-col items-center bg-white w-[90%] max-w-[400px] p-[30px] rounded-[15px] border-2 absolute z-50'>
 
@@ -126,7 +127,7 @@ async function onSubmit(values: z.infer<typeof formSchema>){
             {/* <Button type="submit" className='mt-[20px] w-[100%] p-[12px] bg-[#4caf50] text-white text-[16px] font-bold border-none rounded-[8px] 
             cursor-pointer text-center transition-colors duration-200 hover:bg-[#388e3c] hover:scale-[1.02]'>Login</Button> */}
 
-              <Button type="submit" className="text-white">Login</Button>
+              <a href="\dashboard"><Button type="button" className="text-white">Login</Button></a>
         </div>
       
       </div>
