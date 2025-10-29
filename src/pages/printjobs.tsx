@@ -91,10 +91,10 @@ function PrintJobs() {
     <SidebarProvider>
       <AppSidebar />
       <CustomSidebarTrigger />
-      <main className="bg-yellow-100 min-h-screen">
-        <div className="bg-red-400 flex gap-2 m-4 p-4 rounded-lg">
+      <main className=" bg-amber-200 min-h-screen">
+        <div className="flex gap-2 m-4 p-4 rounded-lg">
           <Button>New Job Order</Button>
-          <Card className="w-[400px]">
+          <Card className="w-[400px] border-blue-400 border-2">
             <CardHeader>
               <CardTitle>NEW PRINT JOB</CardTitle>
               <CardDescription>Enter print job details below.</CardDescription>
@@ -136,11 +136,11 @@ function PrintJobs() {
                         <FormControl>
                           <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
                             <div className="flex items-center gap-3">
-                              <RadioGroupItem value="portrait" id="portrait" />
+                              <RadioGroupItem value="portrait" id="portrait" className="border-blue-400"/>
                               <Label htmlFor="portrait">Portrait</Label>
                             </div>
                             <div className="flex items-center gap-3">
-                              <RadioGroupItem value="landscape" id="landscape" />
+                              <RadioGroupItem value="landscape" id="landscape" className="border-blue-400" />
                               <Label htmlFor="landscape">Landscape</Label>
                             </div>
                           </RadioGroup>
@@ -158,11 +158,11 @@ function PrintJobs() {
                         <FormControl>
                           <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
                             <div className="flex items-center gap-3">
-                              <RadioGroupItem value="bw" id="r1" />
+                              <RadioGroupItem value="bw" id="r1" className="border-blue-400"/>
                               <Label htmlFor="r1">Black & White</Label>
                             </div>
                             <div className="flex items-center gap-3">
-                              <RadioGroupItem value="cmyk" id="r2" />
+                              <RadioGroupItem value="cmyk" id="r2" className="border-blue-400"/>
                               <Label htmlFor="r2">Colored</Label>
                             </div>
                           </RadioGroup>
@@ -183,7 +183,7 @@ function PrintJobs() {
                             min={1}
                             value={field.value}
                             onChange={(e) => field.onChange(Number(e.target.value))}
-                            className="border-blue-400 rounded-xs"
+                            className="border-blue-400 rounded-xs w-1/6"
                           />
                         </FormControl>
                       </FormItem>

@@ -13,8 +13,11 @@ function Dashboard() {
   return (
     <SidebarProvider>
       <AppSidebar />
+      
       <CustomSidebarTrigger/>
-
+      <main className="bg-amber-200">
+        <h1>AAAAA</h1>
+      </main>
     </SidebarProvider>
     
   )
