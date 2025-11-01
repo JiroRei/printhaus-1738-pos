@@ -8,6 +8,7 @@ import App from './App.tsx'
 import Dashboard from './pages/dashboard.tsx';
 import { ThemeProvider } from './pages/page-comps/theme-provider.tsx';
 import PrintJobs from './pages/printjobs.tsx';
+import Inventory from './pages/inventory.tsx';
 
 const router = createBrowserRouter([
   {
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
   },
   {
     path: "inventory",
-    Component: null,
+    Component: Inventory,
   },
   {
     path: "invmgt",
@@ -43,7 +44,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
 <React.StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-    <RouterProvider router={router} />,
+    <RouterProvider router={router} />
     </ThemeProvider>
 </React.StrictMode>
 )

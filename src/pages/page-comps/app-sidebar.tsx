@@ -125,7 +125,7 @@ export function AppSidebar() {
                     <SidebarMenuSubButton asChild>
                       <a href="inventory">
                         <ico.Package />
-                        <span className="">Inventory</span>
+                        <span className="">Inventory Stock</span>
                       </a>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>

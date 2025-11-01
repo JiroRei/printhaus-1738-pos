@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "./page-comps/app-sidebar"
 import { CustomSidebarTrigger } from "./page-comps/sidebar-switch-graaah"
@@ -20,6 +20,7 @@ type PrintJobForm = {
   printCopies: number
   orientation: string
   printFile: File | null
+  printer: string
 }
 
 const PAPER_SIZES: Record<string, { width: number; height: number }> = {
@@ -35,6 +36,7 @@ function PrintJobs() {
   const [previewContent, setPreviewContent] = useState<string | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [fileType, setFileType] = useState<string | null>(null)
+  const [printers, setPrinters] = useState<{ name: string }[]>([])
 
   const form = useForm<PrintJobForm>({
     defaultValues: {
@@ -43,6 +45,7 @@ function PrintJobs() {
       printCopies: 1,
       orientation: "portrait",
       printFile: null,
+      printer: "",
     },
   })
 
@@ -76,16 +79,43 @@ function PrintJobs() {
     }
   }
 
-  const simulatePrint = () => {
+//   const simulatePrint = () => {
+//     const data = form.getValues()
+//     console.log("Simulated print job:")
+//     console.log("Paper Size:", data.paperSize)
+//     console.log("Orientation:", data.orientation)
+//     console.log("Color:", data.printColor === "bw" ? "Black & White" : "Colored")
+//     console.log("Copies:", data.printCopies)
+//     console.log("File:", data.printFile ? data.printFile.name : "No file")
+//     alert("Print simulated. Check console for details.")
+//   }
+
+const handlePrint = async () => {
     const data = form.getValues()
-    console.log("Simulated print job:")
-    console.log("Paper Size:", data.paperSize)
-    console.log("Orientation:", data.orientation)
-    console.log("Color:", data.printColor === "bw" ? "Black & White" : "Colored")
-    console.log("Copies:", data.printCopies)
-    console.log("File:", data.printFile ? data.printFile.name : "No file")
-    alert("Print simulated. Check console for details.")
+    if (!data.printFile) return alert("No file selected.")
+    const formData = new FormData()
+    formData.append("file", data.printFile)
+    formData.append("paperSize", data.paperSize)
+    formData.append("copies", data.printCopies.toString())
+    formData.append("printColor", data.printColor)
+    formData.append("orientation", data.orientation)
+    formData.append("printer", data.printer)
+    await fetch("http://localhost:3000/print", { method: "POST", body: formData })
+    setIsDialogOpen(false)
+    console.log("Success Print?")
+    console.log(data)
   }
+
+  useEffect(() => {
+    const loadPrinters = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/print/printers")
+        const data = await res.json()
+        setPrinters(data)
+      } catch {}
+    }
+    loadPrinters()
+  }, [])
 
   return (
     <SidebarProvider>
@@ -261,11 +291,30 @@ function PrintJobs() {
             )}
           </div>
 
+          <div className="p-4">
+            <Label>Select Printer</Label>
+            <Select
+              onValueChange={(v) => form.setValue("printer", v)}
+              defaultValue={form.getValues().printer}
+            >
+              <SelectTrigger className="border-blue-400 rounded-xs mt-1">
+                <SelectValue placeholder="Select printer..." />
+              </SelectTrigger>
+              <SelectContent>
+                {printers.map((p) => (
+                  <SelectItem key={p.name} value={p.name}>
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <DialogActions className="flex justify-end gap-2 mt-4">
             <Button variant="secondary" onClick={() => setIsDialogOpen(false)}>
               Close
             </Button>
-            <Button onClick={simulatePrint}>Simulate Print</Button>
+            <Button onClick={handlePrint}>Simulate Print</Button>
           </DialogActions>
         </DialogContent>
       </Dialog>
