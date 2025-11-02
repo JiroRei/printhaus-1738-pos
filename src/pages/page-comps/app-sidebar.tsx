@@ -123,7 +123,7 @@ export function AppSidebar() {
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
-                      <a href="ExpensesRevenue">
+                      <a href="/InventoryManagement">
                         <ico.Package />
                         <span className="">Inventory</span>
                       </a>

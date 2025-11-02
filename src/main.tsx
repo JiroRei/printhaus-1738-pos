@@ -8,6 +8,7 @@ import App from './App.tsx'
 import Dashboard from './pages/dashboard.tsx';
 import { ThemeProvider } from './pages/page-comps/theme-provider.tsx';
 import PrintJobs from './pages/printjobs.tsx';
+import InventoryManagement from './pages/inventory-page.tsx';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "printjob",
     Component: PrintJobs,
+  },
+   {
+    path: "/InventoryManagement",
+    Component: InventoryManagement,
   },
 ]);
 
