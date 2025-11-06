@@ -18,7 +18,7 @@ export function AddInventory() {
     <Dialog>
       <form>
         <DialogTrigger asChild>
-          <Button variant="outline"><Plus/></Button>
+          <Button variant="outline" aria-label="Add Inventory" title="Add Inventory"><Plus/></Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -51,10 +51,7 @@ export function AddInventory() {
           </div>
 
 
-          
-
-
-
+        
 
 
 

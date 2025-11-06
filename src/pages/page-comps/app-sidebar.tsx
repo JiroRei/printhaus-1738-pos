@@ -100,7 +100,7 @@ export function AppSidebar() {
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
-                      <a href="Requests">
+                      <a href="/TransactionPage">
                         <ico.List />
                         <span className="">Transactions</span>
                       </a>
@@ -123,7 +123,7 @@ export function AppSidebar() {
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
-                      <a href="/InventoryManagement">
+                      <a href="/InventoryPage">
                         <ico.Package />
                         <span className="">Inventory</span>
                       </a>
@@ -134,7 +134,7 @@ export function AppSidebar() {
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild>
-                      <a href="Payroll">
+                      <a href="/InventoryManagement">
                         <ico.PackagePlus />
                         <span className="">Inventory Management</span>
                       </a>
