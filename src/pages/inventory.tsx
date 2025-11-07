@@ -25,7 +25,7 @@ function Inventory() {
         <Card className="w-xs m-3 border-blue-300 hover:border-primary">
             <CardHeader>
                 <CardTitle>Hard Copy A4 Paper</CardTitle>
-                <CardDescription>Ream 1</CardDescription>
+                <CardDescription>Reams: 3</CardDescription>
                 <CardAction className="text-xs font-semibold">Stock: </CardAction>
             </CardHeader>
             <CardContent>

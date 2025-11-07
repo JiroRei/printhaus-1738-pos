@@ -12,7 +12,15 @@ import { FormField, FormItem, FormLabel, FormControl } from "@/components/ui/for
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import mammoth from "mammoth"
+import { Document, Page, pdfjs } from "react-pdf"
+import "react-pdf/dist/Page/AnnotationLayer.css"
+import "react-pdf/dist/Page/TextLayer.css"
+
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString()
 
 type PrintJobForm = {
   paperSize: string
@@ -57,6 +65,9 @@ function PrintJobs() {
     return { width, height }
   }, [form.watch("paperSize"), form.watch("orientation")])
 
+
+  const [numPages, setNumPages] = useState<number>(0)
+
   const handlePreview = async () => {
     const data = form.getValues()
     if (!data.printFile) return alert("Please upload a file first.")
@@ -64,14 +75,9 @@ function PrintJobs() {
     const ext = file.name.split(".").pop()?.toLowerCase()
     setFileType(ext || null)
 
-    if (ext === "pdf") {
+    if (ext === "pdf" || ["png", "jpg", "jpeg", "gif"].includes(ext || "")) {
       const url = URL.createObjectURL(file)
       setPreviewContent(url)
-      setIsDialogOpen(true)
-    } else if (ext === "docx") {
-      const arrayBuffer = await file.arrayBuffer()
-      const result = await mammoth.convertToHtml({ arrayBuffer })
-      setPreviewContent(result.value)
       setIsDialogOpen(true)
     } else {
       setPreviewContent("<p>Preview not supported for this file type.</p>")
@@ -79,18 +85,7 @@ function PrintJobs() {
     }
   }
 
-//   const simulatePrint = () => {
-//     const data = form.getValues()
-//     console.log("Simulated print job:")
-//     console.log("Paper Size:", data.paperSize)
-//     console.log("Orientation:", data.orientation)
-//     console.log("Color:", data.printColor === "bw" ? "Black & White" : "Colored")
-//     console.log("Copies:", data.printCopies)
-//     console.log("File:", data.printFile ? data.printFile.name : "No file")
-//     alert("Print simulated. Check console for details.")
-//   }
-
-const handlePrint = async () => {
+  const handlePrint = async () => {
     const data = form.getValues()
     if (!data.printFile) return alert("No file selected.")
     const formData = new FormData()
@@ -230,6 +225,7 @@ const handlePrint = async () => {
                           <Input
                             id="document"
                             type="file"
+                            accept=".pdf,.png,.jpg,.jpeg,.gif,.docx"
                             onChange={(e) => {
                               const file = e.target.files?.[0] || null
                               field.onChange(file)
@@ -251,47 +247,53 @@ const handlePrint = async () => {
       </main>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-6xl h-[90vh] flex flex-col items-center overflow-auto">
+        <DialogContent className="max-w-6xl h-[90vh] flex flex-col items-center">
           <DialogHeader>
             <DialogTitle>Print Preview</DialogTitle>
           </DialogHeader>
 
-          <div className="flex-grow flex items-center justify-center w-full overflow-auto">
+          <div className="flex-grow flex items-center justify-center w-full p-4 overflow-hidden">
             {fileType === "pdf" && previewContent && (
-              <div className="relative w-full flex justify-center">
-                <iframe
+            <div className="w-full flex flex-col items-center overflow-auto">
+                <Document
+                file={previewContent}
+                onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                loading={<p>Loading PDF...</p>}
+                >
+                {Array.from(new Array(numPages), (_, index) => (
+                    <Page
+                    key={`page_${index + 1}`}
+                    pageNumber={index + 1}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                    scale={0.5}
+                    />
+                ))}
+                </Document>
+            </div>
+            )}
+
+            {["png", "jpg", "jpeg", "gif"].includes(fileType || "") && previewContent && (
+              <div className="w-full h-full flex justify-center items-center">
+                <img
                   src={previewContent}
-                  className="border shadow-md"
+                  alt="Preview"
+                  className="border shadow-md object-contain"
                   style={{
-                    aspectRatio: `${dimensions.width}/${dimensions.height}`,
-                    width: "100%",
-                    maxWidth: "800px",
-                    height: "auto",
+                    maxWidth: "95%",
+                    maxHeight: "85vh",
+                    transform: "scale(0.75)",
                   }}
                 />
               </div>
             )}
 
-            {fileType === "docx" && previewContent && (
-              <div
-                className="bg-white border shadow-md mx-auto"
-                style={{
-                  aspectRatio: `${dimensions.width}/${dimensions.height}`,
-                  width: "100%",
-                  maxWidth: "800px",
-                  height: "auto",
-                  overflow: "auto",
-                }}
-                dangerouslySetInnerHTML={{ __html: previewContent }}
-              />
-            )}
-
-            {!["pdf", "docx"].includes(fileType || "") && (
+            {!["pdf", "png", "jpg", "jpeg", "gif"].includes(fileType || "") && (
               <p className="text-center text-gray-500 mt-4">Preview not available for this file type.</p>
             )}
           </div>
 
-          <div className="p-4">
+          <div className="p-4 w-full max-w-md">
             <Label>Select Printer</Label>
             <Select
               onValueChange={(v) => form.setValue("printer", v)}
