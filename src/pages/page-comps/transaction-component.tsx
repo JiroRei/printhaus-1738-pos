@@ -8,26 +8,30 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Pencil, Trash2 } from "lucide-react"
+import moment from 'moment';
+import { Pencil, Trash2, PhilippinePeso } from "lucide-react"
+import { useEffect, useState } from "react"
+import { Separator } from "@/components/ui/separator";
 
-const transactions = [
-  {
-    transactionNo: "001",
-    date: "2025-11-06",
-    amount: "₱50.00",
-    paymentMethod: "Cash",
-  },
-  {
-    transactionNo: "002",
-    date: "2025-11-05",
-    amount: "₱200.00",
-    paymentMethod: "GCash",
-  },
-]
+
 
 export function TransactionTable() {
+
+  const [transactions, setTransactions] = useState([]);
+
+  function fetchTransactions(){
+    fetch('http://localhost:3000/print-attribs')
+    .then(res => res.json())
+    .then(data => setTransactions(data.data))
+  }
+  useEffect(() => {
+    fetchTransactions()
+    console.log("AAAAAAAAAAAAAA")
+  }, [])
+  
+
   return (
-    <div className="w-full overflow-x-auto rounded-xl border shadow-sm">
+    <div className="w-[165vh] overflow-x-auto rounded-xl border shadow-sm">
       <Table className="min-w-full text-sm">
         <TableCaption className="text-gray-500 py-4">
           A list of your recent transactions.
@@ -35,21 +39,23 @@ export function TransactionTable() {
 
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px] font-semibold">Invoice No.</TableHead>
+            <TableHead className="w-[100px] font-semibold flex items-center gap-2">Transaction ID</TableHead>
             <TableHead className="font-semibold">Date</TableHead>
+            <TableHead className="font-semibold">Time</TableHead>
             <TableHead className="font-semibold">Amount</TableHead>
             <TableHead className="font-semibold">Payment Method</TableHead>
             <TableHead className="text-center font-semibold">Actions</TableHead>
           </TableRow>
         </TableHeader>
 
-        <TableBody>
-          {transactions.map((item) => (
-            <TableRow key={item.transactionNo} className="transition-colors">
-              <TableCell className="font-medium">{item.transactionNo}</TableCell>
-              <TableCell>{item.date}</TableCell>
-              <TableCell>{item.amount}</TableCell>
-              <TableCell>{item.paymentMethod}</TableCell>
+        <TableBody className="border-b-1">
+          {transactions.map((printvalues: any) => (
+            <TableRow key={printvalues.transactionID} className="transition-colors">
+              <TableCell className="font-medium text-sm font-stretch-extra-condensed">{printvalues.transactionID}</TableCell>
+              <TableCell>{moment(printvalues.createdAt).isValid() ? moment(printvalues.createdAt).format('L') : ""}</TableCell>
+              <TableCell>{moment(printvalues.createdAt).isValid() ? moment(printvalues.createdAt).format('LTS') : ""}</TableCell>
+              <TableCell>{printvalues.paymentMethod}</TableCell>
+              <TableCell>₱ {Number(printvalues.printPrice).toFixed(2)}</TableCell>
               <TableCell className="flex justify-center gap-2">
                 <Button
                   variant="outline"

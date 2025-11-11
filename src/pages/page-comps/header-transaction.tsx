@@ -57,7 +57,7 @@ export function HeaderTransaction() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-48">
-            <DropdownMenuLabel>Sort Inventory</DropdownMenuLabel>
+            <DropdownMenuLabel>Sort</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuRadioGroup value={sortBy} onValueChange={setSortBy}>
               <DropdownMenuRadioItem value="name">Name</DropdownMenuRadioItem>
@@ -67,8 +67,6 @@ export function HeaderTransaction() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Example of an "Add" button if needed */}
-        <AddTransaction />
       </div>
     </header>
   )

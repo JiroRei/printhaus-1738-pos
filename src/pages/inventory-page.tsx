@@ -8,12 +8,10 @@ export default function InventoryManagement() {
   return (
     <SidebarProvider>
       <div className="flex w-full min-h-svh bg-background">
-        {/* Sidebar */}
         <AppSidebar />
 
 
         <div className="flex-1 flex flex-col">
-          {/* Header */}
           <HeaderInventory />
 
 

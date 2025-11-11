@@ -29,7 +29,14 @@ type PrintJobForm = {
   orientation: string
   printFile: File | null
   printer: string
+  printPrice: number
+  paymentMethod: string
 }
+
+const PRICE_PER_PAGE = 3;
+
+
+
 
 const PAPER_SIZES: Record<string, { width: number; height: number }> = {
   A3: { width: 1123, height: 1587 },
@@ -45,6 +52,8 @@ function PrintJobs() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [fileType, setFileType] = useState<string | null>(null)
   const [printers, setPrinters] = useState<{ name: string }[]>([])
+  const [numPages, setNumPages] = useState<number>(0)
+
 
   const form = useForm<PrintJobForm>({
     defaultValues: {
@@ -54,8 +63,58 @@ function PrintJobs() {
       orientation: "portrait",
       printFile: null,
       printer: "",
+      printPrice: NaN,
+      paymentMethod: "CASH"
     },
   })
+
+  const data = form.watch()
+
+  let sizePrice = 0;
+  if (data.paperSize === "A3" || data.paperSize === "Tabloid"){
+    sizePrice = 2
+  }
+  else if(data.paperSize === "A4" || data.paperSize === "A5"){
+    sizePrice = 1
+  }
+  else{
+    sizePrice = 1.5
+  }
+
+  useEffect(() => {
+    const basePrice = data.printColor === "cmyk" ? 5 : 2
+    const sizeMultiplier = sizePrice
+    const total = numPages * data.printCopies * basePrice * sizeMultiplier
+    form.setValue("printPrice", total)
+    console.log(sizeMultiplier)
+  }, [numPages, data.printCopies, data.printColor, data.paperSize])
+
+
+  useEffect(() => {
+    const file = data.printFile
+    if (!file) return
+
+    const ext = file.name.split(".").pop()?.toLowerCase()
+    if (ext !== "pdf") {
+      setNumPages(1)
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      try {
+        const typedarray = new Uint8Array(e.target?.result as ArrayBuffer)
+        const pdf = await pdfjs.getDocument({ data: typedarray }).promise
+        setNumPages(pdf.numPages)
+      } catch (err) {
+        console.error("Failed to read PDF:", err)
+        setNumPages(1)
+      }
+    }
+    reader.readAsArrayBuffer(file)
+  }, [data.printFile])
+
+
 
   const dimensions = useMemo(() => {
     const { paperSize, orientation } = form.getValues()
@@ -66,7 +125,7 @@ function PrintJobs() {
   }, [form.watch("paperSize"), form.watch("orientation")])
 
 
-  const [numPages, setNumPages] = useState<number>(0)
+  
 
   const handlePreview = async () => {
     const data = form.getValues()
@@ -94,11 +153,35 @@ function PrintJobs() {
     formData.append("copies", data.printCopies.toString())
     formData.append("printColor", data.printColor)
     formData.append("orientation", data.orientation)
-    formData.append("printer", data.printer)
+    formData.append("printer", data.printer)  
+    formData.append("printPrice", data.printPrice.toString())
+    formData.append("paymentMethod", data.paymentMethod)
+
     await fetch("http://localhost:3000/print", { method: "POST", body: formData })
-    setIsDialogOpen(false)
+    
     console.log("Success Print?")
     console.log(data)
+    console.log(formData)
+
+    const data4Record = {
+
+      paperSize: data.paperSize,
+      printCopies: data.printCopies,
+      printColor: data.printColor,
+      orientation: data.orientation,
+      printer: data.printer,
+      printPrice: data.printPrice,
+      paymentMethod: data.paymentMethod,
+
+    }
+      
+    await fetch("http://localhost:3000/print-attribs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data4Record),
+    })
+    
+    setIsDialogOpen(false)
   }
 
   useEffect(() => {
@@ -111,6 +194,13 @@ function PrintJobs() {
     }
     loadPrinters()
   }, [])
+
+  // useEffect(() => {
+  //   const copies = form.watch("printCopies");
+  //   const totalPrice = numPages * PRICE_PER_PAGE * copies;
+  //   form.setValue("printPrice", totalPrice);
+  // }, [form.watch("printCopies"), numPages]);
+
 
   return (
     <SidebarProvider>
@@ -128,6 +218,7 @@ function PrintJobs() {
             <CardContent>
               <FormProvider {...form}>
                 <form>
+                <div className="flex justify-between">
                   <FormField
                     control={form.control}
                     name="paperSize"
@@ -152,6 +243,27 @@ function PrintJobs() {
                     )}
                   />
 
+                <FormField
+                    control={form.control}
+                    name="printCopies"
+                    render={({ field }) => (
+                      <FormItem className="">
+                        <FormLabel>Number of Copies</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={1}
+                            value={field.value}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            className="border-blue-400 rounded-xs w-1/4"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="flex justify-between">
                   <FormField
                     control={form.control}
                     name="orientation"
@@ -195,25 +307,8 @@ function PrintJobs() {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="printCopies"
-                    render={({ field }) => (
-                      <FormItem className="mt-3">
-                        <FormLabel>Number of Copies</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            min={1}
-                            value={field.value}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                            className="border-blue-400 rounded-xs w-1/6"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                </div>
+                  
 
                   <FormField
                     control={form.control}
@@ -236,6 +331,49 @@ function PrintJobs() {
                       </FormItem>
                     )}
                   />
+                <div className="flex ">
+                  <FormField
+                    control={form.control}
+                    name="printPrice"
+                    render={({ field }) => (
+                      <FormItem className="mt-3">
+                        <FormLabel>Amount:</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={1}
+                            value={field.value}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            className="border-blue-400 rounded-xs w-1/2"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="paymentMethod"
+                    render={({ field }) => (
+                      <FormItem className="mt-3">
+                        <FormLabel>Payment Method</FormLabel>
+                        <FormControl>
+                          <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
+                            <div className="flex items-center gap-3">
+                              <RadioGroupItem value="CASH" id="CASH" className="border-blue-400"/>
+                              <Label htmlFor="CASH">Cash</Label>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <RadioGroupItem value="DIGITAL" id="DIGITAL" className="border-blue-400" />
+                              <Label htmlFor="DIGITAL">Digital</Label>
+                            </div>
+                          </RadioGroup>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                </div>
                 </form>
               </FormProvider>
             </CardContent>
@@ -252,12 +390,14 @@ function PrintJobs() {
             <DialogTitle>Print Preview</DialogTitle>
           </DialogHeader>
 
-          <div className="flex-grow flex items-center justify-center w-full p-4 overflow-hidden">
+          <div className="max-h-[80vh] flex-grow flex  justify-center w-full p-4 overflow-y-auto bg-gray-50">
             {fileType === "pdf" && previewContent && (
             <div className="w-full flex flex-col items-center overflow-auto">
                 <Document
                 file={previewContent}
-                onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                onLoadSuccess={({ numPages }) => {
+                  setNumPages(numPages);
+                  const totalPrice = numPages * PRICE_PER_PAGE * form.getValues("printCopies")}}
                 loading={<p>Loading PDF...</p>}
                 >
                 {Array.from(new Array(numPages), (_, index) => (
@@ -266,7 +406,7 @@ function PrintJobs() {
                     pageNumber={index + 1}
                     renderTextLayer={false}
                     renderAnnotationLayer={false}
-                    scale={0.5}
+                    scale={0.45}
                     />
                 ))}
                 </Document>

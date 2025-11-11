@@ -8,12 +8,8 @@ import App from './App.tsx'
 import Dashboard from './pages/dashboard.tsx';
 import { ThemeProvider } from './pages/page-comps/theme-provider.tsx';
 import PrintJobs from './pages/printjobs.tsx';
-<<<<<<< HEAD
 import Inventory from './pages/inventory.tsx';
-=======
-import InventoryManagement from './pages/inventory-page.tsx';
 import TransactionPage from './pages/transaction-page.tsx';
->>>>>>> 400107866f53b11a962ce9fd74de24364871afe3
 
 const router = createBrowserRouter([
   {
@@ -28,10 +24,9 @@ const router = createBrowserRouter([
     path: "printjob",
     Component: PrintJobs,
   },
-<<<<<<< HEAD
   {
     path: "transactions",
-    Component: null,
+    Component: TransactionPage,
   },
   {
     path: "salesreport",
@@ -44,15 +39,6 @@ const router = createBrowserRouter([
   {
     path: "invmgt",
     Component: null,
-=======
-   {
-    path: "/InventoryManagement",
-    Component: InventoryManagement,
-  },
-  {
-    path: "/TransactionPage",
-    Component: TransactionPage,
->>>>>>> 400107866f53b11a962ce9fd74de24364871afe3
   },
 ]);
 
